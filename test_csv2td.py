@@ -18,6 +18,9 @@ class CSV2TDTestCase(unittest.TestCase):
     def test_import(self):
         self.assertTrue(True)
 
+    """
+    Test cases for correct_object_name
+    """
     def test_long_object_name(self):
         object_name = "aaaaabbbbccccddddddfaaaaaajjjjjjkkkkkkllllllddddddd"
         self.assertEqual(object_name[:30],
@@ -37,6 +40,44 @@ class CSV2TDTestCase(unittest.TestCase):
         object_name = "123iloveyou"
         self.assertEqual("_123iloveyou",
                          csv2td.correct_object_name(object_name))
+
+    def test_name_not_str(self):
+        with self.assertRaises(TypeError):
+            r = csv2td.correct_object_name(1)
+
+    def test_name_is_blank_str(self):
+        with self.assertRaises(TypeError):
+            r = csv2td.correct_object_name('')
+
+    def test_guess_date_wrong_type(self):
+        with self.assertRaises(AssertionError):
+            r = csv2td.guess_date_format('somestr')
+
+    def test_guess_date_yyyymmdd(self):
+        input_dates = ['20160909','20170808']
+        r = csv2td.guess_date_format(input_dates)
+        self.assertEqual(r,'yyyymmdd')
+
+    def test_guess_date_yyyy_mm_dd(self):
+        input_dates = ['2016-09-09','2017-08-08']
+        r = csv2td.guess_date_format(input_dates)
+        self.assertEqual(r,'yyyy-mm-dd')
+
+    def test_guess_date_ddmmyyyy2(self):
+        input_dates = ['09/09/2018','31/12/2019']
+        r = csv2td.guess_date_format(input_dates)
+        self.assertEqual(r,'dd/mm/yyyy')
+
+    def test_guess_date_ddmmyyyy3(self):
+        input_dates = ['09-09-2018','31-12-2019']
+        r = csv2td.guess_date_format(input_dates)
+        self.assertEqual(r,'dd-mm-yyyy')
+
+    def test_guess_date_none(self):
+        input_dates = ['20160909','2017-08-08']
+        r = csv2td.guess_date_format(input_dates)
+        self.assertIsNone(r)
+
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(CSV2TDTestCase)
