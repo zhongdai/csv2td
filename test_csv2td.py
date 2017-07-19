@@ -63,11 +63,6 @@ class CSV2TDTestCase(unittest.TestCase):
         r = csv2td.guess_date_format(input_dates)
         self.assertEqual(r,'yyyy-mm-dd')
 
-    def test_guess_date_ddmmyyyy1(self):
-        input_dates = ['09092018','31122019']
-        r = csv2td.guess_date_format(input_dates)
-        self.assertEqual(r,'ddmmyyyy')
-
     def test_guess_date_ddmmyyyy2(self):
         input_dates = ['09/09/2018','31/12/2019']
         r = csv2td.guess_date_format(input_dates)

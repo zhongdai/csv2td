@@ -46,8 +46,7 @@ def guess_date_format(list_of_date):
         'yyyymmdd':re.compile(r"\d{4}[0|1]\d[0|1|2|3]\d"),
         'yyyy-mm-dd':re.compile(r"\d{4}\-[0|1]\d\-[0|1|2|3]\d"),
         'dd/mm/yyyy':re.compile(r"[0|1|2|3]\d\/[0|1]\d\/\d{4}"),
-        'dd-mm-yyyy':re.compile(r"[0|1|2|3]\d\-[0|1]\d\-\d{4}"),
-        'ddmmyyyy':re.compile(r"[0|1|2|3]\d[0|1]\d\d{4}")
+        'dd-mm-yyyy':re.compile(r"[0|1|2|3]\d\-[0|1]\d\-\d{4}")
     }
     return_format = None
     for name, m in matchers.items():
