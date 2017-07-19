@@ -54,6 +54,7 @@ setup(
     entry_points={
         'console_scripts': [
             'csv2td = csv2td.csv2td:command_line_runner',
+            'csv2tdinit = csv2td.csv2td:generate_init_file'
         ]
     },
     install_requires=[
