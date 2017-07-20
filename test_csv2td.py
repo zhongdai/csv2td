@@ -3,8 +3,13 @@
 """Tests for Wbteq"""
 import os
 import unittest
+from io import StringIO
+from configparser import SectionProxy
+import configparser
 
 from csv2td import csv2td
+from csv2td import filetemp
+
 
 
 class CSV2TDTestCase(unittest.TestCase):
@@ -78,6 +83,27 @@ class CSV2TDTestCase(unittest.TestCase):
         r = csv2td.guess_date_format(input_dates)
         self.assertIsNone(r)
 
+    """
+    Test the get_config
+    """
+    def test_config_normal(self):
+        text = filetemp.INI_FILE
+        filename = filetemp.INI_FILE_NAME
+        with open(filename,'w') as f:
+            f.write(text)
+        r = csv2td.get_config()
+        self.assertTrue(isinstance(r, SectionProxy))
+        os.remove(filename)
+
+    def test_config_double_sections(self):
+        text = filetemp.INI_FILE
+        filename = filetemp.INI_FILE_NAME
+        with open(filename,'w') as f:
+            f.write(text)
+            f.write(text)
+        with self.assertRaises(configparser.DuplicateSectionError):
+            r = csv2td.get_config()
+        os.remove(filename)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(CSV2TDTestCase)

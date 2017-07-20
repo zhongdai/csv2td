@@ -9,7 +9,8 @@ import numpy as np
 import re
 
 from . import __version__
-from .filetemp import INI_FILE
+from .filetemp import INI_FILE, INI_FILE_NAME, FASTLOAD_CTL
+from .filetemp import INI_FILE_KEYS
 
 def correct_object_name(object_name):
     """
@@ -88,15 +89,37 @@ def get_parser():
     parser = argparse.ArgumentParser(description='Generate Fastload script')
 
     parser.add_argument('filename',type=str,
-                        help='The full path of CSV file to be loaded to Teradata')
+                        help='The filename of CSV file to be loaded to Teradata')
 
     return parser
 
+def get_config():
+    cfg = configparser.ConfigParser()
+    error_message = """
+    The configuration file name should be csv2td.ini, please make sure it has all
+    required format / data.
+    Please execute `csv2tdinit` to generate a template file under same folder.
+    """
+    try:
+        cfg.read(INI_FILE_NAME)
+    except Exception as e:
+        raise
+
+    sections = cfg.sections()
+    if len(sections) != 1:
+        raise SystemExit(error_message)
+
+    section_name = sections[0]
+
+    for key in INI_FILE_KEYS:
+        if key not in cfg[section_name]:
+            raise SystemExit(error_message)
+    return cfg[section_name]
+
 def generate_init_file():
     current_dir = os.getcwd()
-    filename = 'csv2td.ini'
 
-    with open(os.path.join(current_dir, filename), 'w') as f:
+    with open(os.path.join(current_dir, INI_FILE_NAME), 'w') as f:
         f.write(INI_FILE)
 
     print('The template configuration file [{}] has been generated at current folder'.format(filename))
@@ -106,6 +129,30 @@ def command_line_runner():
     parser = get_parser()
 
     args = vars(parser.parse_args())
+
+    # File only can be placed under the current folder
+    csv_filename = args['filename']
+    full_path = os.path.join(os.getcwd(),csv_filename)
+
+    if not os.path.isfile(full_path):
+        raise ValueError('{} is not a file, please check'.format(full_path))
+
+    s = csv.Sniffer()
+    with open(full_path) as f:
+        if not s.has_header(f.read(1024)):
+            has_header = False
+        else:
+            has_header = True
+    if not has_header:
+        raise ValueError('please make sure you have headers in the file')
+
+    # Get the config object
+    section = get_config()
+
+    # process data
+    
+
+
 
 if __name__ == '__main__':
     command_line_runner()
