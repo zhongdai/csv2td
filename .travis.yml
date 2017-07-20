@@ -1,9 +1,17 @@
+sudo: false
 language: python
-language: python
+
 python:
-  - "3.5"
-  - "3.6"
+  - 3.5
+  - 3.6
 # command to install dependencies
-install: "pip install -r requirements.txt"
+install:
+  - pip install -r requirements.txt
+  - pip install codecov
 # command to run tests
-script: pytest
+script:
+  - pytest
+  - coverage run test_csv2td.py
+
+after_success:
+  - codecov
