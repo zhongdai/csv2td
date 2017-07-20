@@ -18,4 +18,35 @@ max_lines: <number>
 """
 
 FASTLOAD_CTL = """
+SESSIONS 4;
+errlimit 1000;
+LOGON {dburl}/{username}, {password};
+
+
+-- *************************************************************************************************************
+DELETE FROM {schema}.{tablename};
+SET RECORD VARTEXT ','  NOSTOP;
+
+DEFINE
+	  Process_Date  (VARCHAR(10))
+	, Trx_Number    (VARCHAR(3))
+	, Cust_Z_Num    (VARCHAR(8))
+	, CisKey        (VARCHAR(11))
+	, Attr_Name     (VARCHAR(200))
+    , Attr_Value    (VARCHAR(2000))
+FILE={csv_file_name}.csv;
+SHOW;
+
+BEGIN LOADING {schema}.{tablename} ERRORFILES {schema}.{tablename}_E1, {schema}.{tablename}_E2;
+INSERT INTO {schema}.{tablename} VALUES (
+	  :Process_Date (DATE, FORMAT 'YYYY-MM-DD')
+	, :Trx_Number
+	, :Cust_Z_Num
+	, :CisKey
+	, :Attr_Name
+    , :Attr_Value
+);
+
+END LOADING;
+LOGOFF
 """
