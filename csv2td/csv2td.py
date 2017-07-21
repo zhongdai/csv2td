@@ -122,7 +122,7 @@ def generate_init_file():
     with open(os.path.join(current_dir, INI_FILE_NAME), 'w') as f:
         f.write(INI_FILE)
 
-    print('The template configuration file [{}] has been generated at current folder'.format(filename))
+    print('The template configuration file [{}] has been generated at current folder'.format(INI_FILE_NAME))
     return
 
 def command_line_runner():
@@ -150,7 +150,7 @@ def command_line_runner():
     section = get_config()
 
     # process data
-    
+
 
 
 
